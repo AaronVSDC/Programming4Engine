@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <iostream>
 #define WIN32_LEAN_AND_MEAN 
 #include <windows.h>
 #include <SDL.h>
@@ -9,6 +10,8 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "Time.h"
+#define DELTA_TIME (Time::GetInstance().GetDeltaTime())
 
 SDL_Window* g_window{};
 
@@ -82,13 +85,17 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
+	auto& time = Time::GetInstance(); 
 
 	// todo: this update loop could use some work.
 	bool doContinue = true;
 	while (doContinue)
 	{
+		time.Update(true, 60.f); //updates deltaTime and also capps frameRate to 144
 		doContinue = input.ProcessInput();
 		sceneManager.Update();
 		renderer.Render();
+
+		std::cout << DELTA_TIME << std::endl; 
 	}
 }
